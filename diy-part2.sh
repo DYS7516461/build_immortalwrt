@@ -72,6 +72,11 @@ CONFIG_PACKAGE_luci-theme-openwrt-2020=y
 # 应用过滤
 # CONFIG_PACKAGE_luci-app-oaf=y
 
+# Keep ustream SSL backend consistent with luci-ssl and wpad-basic-mbedtls.
+CONFIG_PACKAGE_libustream-mbedtls=y
+# CONFIG_PACKAGE_libustream-openssl is not set
+# CONFIG_PACKAGE_wget-ssl is not set
+
 " >> .config
 
 # 修改默认IP
