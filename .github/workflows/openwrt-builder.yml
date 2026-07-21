@@ -140,9 +140,10 @@ jobs:
           echo "Expected device $EXPECTED_DEVICE, got $DEVICE_NAME"
           exit 1
         fi
+        rm -rf dl/go-mod-cache
         make download -j8
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
+        find dl -maxdepth 1 -type f -size -1024c -exec ls -l {} \;
+        find dl -maxdepth 1 -type f -size -1024c -exec rm -f {} \;
 
     - name: 编译固件
       id: compile
