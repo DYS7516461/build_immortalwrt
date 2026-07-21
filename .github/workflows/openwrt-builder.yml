@@ -25,6 +25,7 @@ env:
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
+  EXPECTED_DEVICE: xiaomi_mir3g
   TZ: Asia/Shanghai
 
 jobs:
@@ -131,6 +132,12 @@ jobs:
       run: |
         cd openwrt
         make defconfig
+        DEVICE_NAME="$(grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/')"
+        echo "Selected device: $DEVICE_NAME"
+        if [ "$DEVICE_NAME" != "$EXPECTED_DEVICE" ]; then
+          echo "Expected device $EXPECTED_DEVICE, got $DEVICE_NAME"
+          exit 1
+        fi
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
@@ -183,6 +190,15 @@ jobs:
       run: |
         cd openwrt/bin/targets/*/*
         rm -rf packages
+        echo "=== Firmware artifacts ==="
+        find . -maxdepth 1 -type f -printf '%f\n' | sort
+        find . -maxdepth 1 -type f -printf '%f\n' | sort > firmware-files.txt
+        for pattern in '*kernel1.bin' '*rootfs0.bin' '*sysupgrade.bin'; do
+          if ! compgen -G "$pattern" > /dev/null; then
+            echo "Missing required firmware artifact: $pattern"
+            exit 1
+          fi
+        done
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> ${GITHUB_OUTPUT}
 
@@ -208,12 +224,19 @@ jobs:
 
         ⏱️ 编译时间: $(date +"%Y年%m月%d日%H时%M分")
 
-        🌐 管理地址: 10.0.0.1 , 子网掩码: 255.255.252.0
+        🌐 管理地址: 192.168.100.1
+
+        🧩 子网掩码: 255.255.255.0
 
         👤 用户名: root
 
-        🔒 密码: 空 
-        
+        🔒 密码: password
+
+        💾 全新刷机内核: *kernel1.bin
+
+        💾 全新刷机根文件系统: *rootfs0.bin
+
+        🔄 在线更新: *-sysupgrade.bin
         " >> release.txt
         echo "status=success" >> ${GITHUB_OUTPUT}
 

@@ -80,10 +80,10 @@ CONFIG_PACKAGE_libustream-mbedtls=y
 " >> .config
 
 # 修改默认IP
-sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.100.1/g' package/base-files/files/bin/config_generate
 
 # 修改默认子网掩码
-sed -i 's/255.255.255.0/255.255.252.0/g' package/base-files/files/bin/config_generate
+sed -i 's/255.255.255.0/255.255.255.0/g' package/base-files/files/bin/config_generate
 
 # 修改默认主题
 #sed -i 's/luci-theme-openwrt-2020/luci-theme-alpha/g' feeds/luci/collections/luci/Makefile
@@ -95,7 +95,7 @@ sed -i 's/ImmortalWrt/OpenWrt/g' package/base-files/files/bin/config_generate
 #cat feeds/luci/modules/luci-mod-admin-full/luasrc/view/admin_network/diagnostics.htm
 
 # 修改系统信息
-# cp -f $GITHUB_WORKSPACE/99-default-settings package/emortal/default-settings/files/99-default-settings
+cp -f $GITHUB_WORKSPACE/99-default-settings package/emortal/default-settings/files/99-default-settings
 cp -f $GITHUB_WORKSPACE/banner package/base-files/files/etc/banner
 
 # 修改主题背景
