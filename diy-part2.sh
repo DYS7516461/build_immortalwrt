@@ -76,6 +76,9 @@ CONFIG_PACKAGE_luci-theme-openwrt-2020=y
 CONFIG_PACKAGE_libustream-mbedtls=y
 # CONFIG_PACKAGE_libustream-openssl is not set
 # CONFIG_PACKAGE_wget-ssl is not set
+# Avoid recursive dependency between mihomo-alpha and mihomo-meta.
+# CONFIG_PACKAGE_mihomo-alpha is not set
+# CONFIG_PACKAGE_mihomo-meta is not set
 
 " >> .config
 

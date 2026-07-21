@@ -25,7 +25,7 @@ env:
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
-  EXPECTED_DEVICE: xiaomi_mir3g
+  EXPECTED_DEVICE: xiaomi_mi-router-3g
   TZ: Asia/Shanghai
 
 jobs:
@@ -132,6 +132,10 @@ jobs:
       run: |
         cd openwrt
         make defconfig
+        echo "=== Final target config ==="
+        grep '^CONFIG_TARGET' .config || true
+        echo "=== Mihomo config ==="
+        grep 'CONFIG_PACKAGE_mihomo' .config || true
         DEVICE_NAME="$(grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/')"
         echo "Selected device: $DEVICE_NAME"
         if [ "$DEVICE_NAME" != "$EXPECTED_DEVICE" ]; then
@@ -186,7 +190,7 @@ jobs:
 
     - name: 整理固件文件
       id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
         cd openwrt/bin/targets/*/*
         rm -rf packages

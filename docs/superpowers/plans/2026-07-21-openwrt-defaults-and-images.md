@@ -4,7 +4,7 @@
 
 **目标：** 修改 OpenWrt 编译配置，使固件默认地址为 `192.168.100.1`、默认登录为 `root/password`，并保证 Xiaomi Mi Router 3G 产物包含 `kernel1.bin`、`rootfs0.bin`、`sysupgrade.bin`。
 
-**架构：** 网络默认值继续由 `diy-part2.sh` 修改上游 `config_generate`。默认密码通过已有 `99-default-settings` 进入固件。固件产物类型由 `xiaomi_mir3g` 目标生成，workflow 在构建前校验目标设备，在构建后校验 `kernel1.bin`、`rootfs0.bin`、`sysupgrade.bin`。
+**架构：** 网络默认值继续由 `diy-part2.sh` 修改上游 `config_generate`。默认密码通过已有 `99-default-settings` 进入固件。固件产物类型由 `xiaomi_mi-router-3g` 目标生成，workflow 在构建前校验目标设备，在构建后校验 `kernel1.bin`、`rootfs0.bin`、`sysupgrade.bin`。
 
 **技术栈：** Bash、OpenWrt/ImmortalWrt 构建系统、GitHub Actions。
 
@@ -66,14 +66,14 @@ sed -i 's#root::0:0:99999:7:::#root:$1$V4UetPzk$CYXluq4wUazHjmCDBCqXF.:0:0:99999
 
 - 修改：`.config`
 
-- [x] **步骤 1：保持目标设备为 xiaomi_mir3g**
+- [x] **步骤 1：保持目标设备为 xiaomi_mi-router-3g**
 
 确认 `.config` 包含：
 
 ```text
 CONFIG_TARGET_ramips=y
 CONFIG_TARGET_ramips_mt7621=y
-CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mir3g=y
+CONFIG_TARGET_ramips_mt7621_DEVICE_xiaomi_mi-router-3g=y
 ```
 
 - [x] **步骤 2：启用 squashfs 并禁用 initramfs-only 固件**
@@ -96,7 +96,7 @@ CONFIG_TARGET_ROOTFS_SQUASHFS=y
 在全局 `env` 中加入：
 
 ```yaml
-  EXPECTED_DEVICE: xiaomi_mir3g
+  EXPECTED_DEVICE: xiaomi_mi-router-3g
 ```
 
 - [x] **步骤 2：make defconfig 后校验目标设备**
@@ -152,14 +152,14 @@ done
 运行：
 
 ```powershell
-rg -n "EXPECTED_DEVICE|xiaomi_mir3g|adslr_g7|ROOTFS_SQUASHFS|ROOTFS_INITRAMFS|kernel1\.bin|rootfs0\.bin|sysupgrade\.bin|192\.168\.100\.1|99-default-settings|password" .config diy-part2.sh 99-default-settings .github\workflows\openwrt-builder.yml
+rg -n "EXPECTED_DEVICE|xiaomi_mi-router-3g|adslr_g7|ROOTFS_SQUASHFS|ROOTFS_INITRAMFS|kernel1\.bin|rootfs0\.bin|sysupgrade\.bin|192\.168\.100\.1|99-default-settings|password" .config diy-part2.sh 99-default-settings .github\workflows\openwrt-builder.yml
 ```
 
 预期：
 
 - 能看到 `192.168.100.1`。
 - 能看到 `99-default-settings` 复制命令。
-- 能看到 `EXPECTED_DEVICE: xiaomi_mir3g`。
+- 能看到 `EXPECTED_DEVICE: xiaomi_mi-router-3g`。
 - 能看到 `kernel1.bin`、`rootfs0.bin` 和 `sysupgrade.bin`。
 - 不应再看到有效的 `adslr_g7`、`10.0.0.1` 或 `255.255.252.0` 配置。
 

@@ -14,7 +14,7 @@
 
 仓库已有 `99-default-settings`，其中包含首次启动默认设置和 root 密码 hash。但 `diy-part2.sh` 里复制该文件到固件默认设置包的命令目前是注释状态，因此这个密码设置可能没有进入最终固件。
 
-`.config` 当前目标为 `ramips/mt7621/xiaomi_mir3g`。此前 GitHub Actions 产物中曾出现 `adslr_g7-initramfs-kernel.bin`，这说明 CI 实际使用的最终目标设备需要在 workflow 中显式校验，不能只依赖 Release 文案判断。
+`.config` 当前目标为 `ramips/mt7621/xiaomi_mi-router-3g`。此前 GitHub Actions 产物中曾出现 `adslr_g7-initramfs-kernel.bin`，根因是使用了错误的设备符号 `xiaomi_mir3g`，被 `make defconfig` 丢弃后回落到默认设备。因此 CI 实际使用的最终目标设备需要在 workflow 中显式校验，不能只依赖 Release 文案判断。
 
 ## 设计
 
@@ -22,13 +22,13 @@
 
 启用现有 `99-default-settings`：在 `diy-part2.sh` 中把它复制到 `package/emortal/default-settings/files/99-default-settings`。同时更新 `99-default-settings` 内的 root 密码 hash，使默认明文密码为 `password`。用户名保持 OpenWrt 默认的 `root`。
 
-保持 `.config` 的目标设备为 `xiaomi_mir3g`，并显式启用 squashfs 根文件系统、禁用 initramfs-only 固件。小米 3G 的全量刷机通常使用拆分镜像，因此 Release 说明和产物校验统一使用：
+保持 `.config` 的目标设备为 `xiaomi_mi-router-3g`，并显式启用 squashfs 根文件系统、禁用 initramfs-only 固件。小米 3G 的全量刷机通常使用拆分镜像，因此 Release 说明和产物校验统一使用：
 
 - `*kernel1.bin`：全量刷机内核分区镜像。
 - `*rootfs0.bin`：全量刷机根文件系统分区镜像。
 - `*sysupgrade.bin`：OpenWrt/ImmortalWrt 后台在线更新包。
 
-workflow 在 `make defconfig` 后读取最终 `.config` 中的 `CONFIG_TARGET_*_DEVICE_*=y`，若不是 `xiaomi_mir3g` 就立即失败。编译完成并进入固件目录后，workflow 必须检查 `*kernel1.bin`、`*rootfs0.bin`、`*sysupgrade.bin` 是否都存在；缺少任意一个就失败，避免发布错误或不完整产物。
+workflow 在 `make defconfig` 后读取最终 `.config` 中的 `CONFIG_TARGET_*_DEVICE_*=y`，若不是 `xiaomi_mi-router-3g` 就立即失败。编译完成并进入固件目录后，workflow 必须检查 `*kernel1.bin`、`*rootfs0.bin`、`*sysupgrade.bin` 是否都存在；缺少任意一个就失败，避免发布错误或不完整产物。
 
 ## 验证
 
@@ -38,7 +38,7 @@ workflow 在 `make defconfig` 后读取最终 `.config` 中的 `CONFIG_TARGET_*_
 - `diy-part2.sh` 会复制 `99-default-settings` 到默认设置包。
 - `99-default-settings` 内 root 密码 hash 非空，并对应密码 `password`。
 - `.config` 启用 `CONFIG_TARGET_ROOTFS_SQUASHFS=y`，并禁用 `CONFIG_TARGET_ROOTFS_INITRAMFS`。
-- workflow 会校验最终目标设备为 `xiaomi_mir3g`。
+- workflow 会校验最终目标设备为 `xiaomi_mi-router-3g`。
 - workflow 会校验 `kernel1.bin`、`rootfs0.bin`、`sysupgrade.bin` 都存在。
 - GitHub Release 文案包含 `kernel1.bin`、`rootfs0.bin` 和 `sysupgrade.bin`。
 - `git diff --check` 没有空白错误。
