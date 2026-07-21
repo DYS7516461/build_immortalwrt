@@ -239,8 +239,12 @@ jobs:
         token: ${{ github.token }}
 
     - name: 删除自动发布的旧固件
-      uses: dev-drprasad/delete-older-releases@master
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 5
-        delete_tags: true
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release list --limit 100 --json tagName,createdAt --jq 'sort_by(.createdAt) | reverse | .[5:] | .[].tagName' | while read -r tag; do
+          [ -n "$tag" ] || continue
+          echo "Deleting old release: $tag"
+          gh release delete "$tag" --yes --cleanup-tag
+        done
