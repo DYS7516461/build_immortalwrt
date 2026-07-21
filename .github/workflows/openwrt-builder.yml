@@ -11,6 +11,10 @@ on:
 #  schedule:
 #   - cron: 0 1 1/7 * *
 
+permissions:
+  contents: write
+  actions: write
+
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: v24.10.6
@@ -22,7 +26,6 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
 jobs:
   build:
@@ -121,7 +124,7 @@ jobs:
       uses: P3TERX/ssh2actions@v1.0.0
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
       env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
 
     - name: 下载软件包
       id: package
@@ -218,7 +221,7 @@ jobs:
       run: ls ${{ env.FIRMWARE }}
 
     - name: 自动发布固件到 Releases
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       if: steps.tag.outputs.status == 'success' && !cancelled()
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
@@ -233,7 +236,7 @@ jobs:
       with:
         retain_days: 1
         keep_minimum_runs: 3
-        token: ${{ env.GITHUB_TOKEN }}
+        token: ${{ github.token }}
 
     - name: 删除自动发布的旧固件
       uses: dev-drprasad/delete-older-releases@master
