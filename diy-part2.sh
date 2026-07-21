@@ -24,8 +24,6 @@ function git_sparse_clone() {
   cd .. && rm -rf $repodir
 }
 
-git_sparse_clone master https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community luci-app-tailscale-community
-
 # 添加额外插件
 #git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 
