@@ -72,17 +72,15 @@ jobs:
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
-    - name: Restore OpenWrt Cache
+    - name: Restore OpenWrt Downloads and CCache
       uses: actions/cache@v4
       with:
         path: |
           openwrt/dl
           ~/.ccache
-          openwrt/staging_dir/host*
-          openwrt/staging_dir/toolchain-*
-          openwrt/build_dir/target-*
-        key: openwrt-${{ env.REPO_BRANCH }}-toolchain
+        key: openwrt-${{ env.REPO_BRANCH }}-${{ env.EXPECTED_DEVICE }}-${{ hashFiles('.config', 'diy-part1.sh', 'diy-part2.sh') }}
         restore-keys: |
+          openwrt-${{ env.REPO_BRANCH }}-${{ env.EXPECTED_DEVICE }}-
           openwrt-${{ env.REPO_BRANCH }}-
 
     - name: Setup CCache

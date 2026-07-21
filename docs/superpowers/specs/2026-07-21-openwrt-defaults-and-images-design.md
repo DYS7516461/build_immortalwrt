@@ -30,6 +30,8 @@
 
 workflow 在 `make defconfig` 后读取最终 `.config` 中的 `CONFIG_TARGET_*_DEVICE_*=y`，若不是 `xiaomi_mi-router-3g` 就立即失败。编译完成并进入固件目录后，workflow 必须检查 `*kernel1.bin`、`*rootfs0.bin`、`*sysupgrade.bin` 是否都存在；缺少任意一个就失败，避免发布错误或不完整产物。
 
+Actions 缓存只保留 `openwrt/dl` 和 `~/.ccache`。不要缓存 `staging_dir`、`toolchain-*` 或 `build_dir/target-*`，因为这些目录和目标架构、工具链、包配置强相关，复用旧缓存可能导致 host 工具链接到 target musl 库，出现 `__time64`、`__stat_time64` 等链接错误。
+
 ## 验证
 
 本地验证检查：
@@ -41,6 +43,7 @@ workflow 在 `make defconfig` 后读取最终 `.config` 中的 `CONFIG_TARGET_*_
 - workflow 会校验最终目标设备为 `xiaomi_mi-router-3g`。
 - workflow 会校验 `kernel1.bin`、`rootfs0.bin`、`sysupgrade.bin` 都存在。
 - GitHub Release 文案包含 `kernel1.bin`、`rootfs0.bin` 和 `sysupgrade.bin`。
+- workflow 缓存不包含 OpenWrt `staging_dir`、`toolchain-*` 或 `build_dir/target-*`。
 - `git diff --check` 没有空白错误。
 
 完整固件验证需要运行 GitHub Actions 编译，并在发布产物中确认存在对应的 factory 和 sysupgrade 固件文件。

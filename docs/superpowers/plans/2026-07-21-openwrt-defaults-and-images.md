@@ -91,6 +91,17 @@ CONFIG_TARGET_ROOTFS_SQUASHFS=y
 
 - 修改：`.github/workflows/openwrt-builder.yml`
 
+- [x] **步骤 0：收窄 OpenWrt 缓存范围**
+
+缓存只保留：
+
+```yaml
+openwrt/dl
+~/.ccache
+```
+
+不要缓存 `openwrt/staging_dir/host*`、`openwrt/staging_dir/toolchain-*`、`openwrt/build_dir/target-*`，避免旧工具链目录污染新构建。
+
 - [x] **步骤 1：设置预期目标设备**
 
 在全局 `env` 中加入：
