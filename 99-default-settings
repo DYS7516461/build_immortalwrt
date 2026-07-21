@@ -12,6 +12,13 @@ if ! uci -q get system.@imm_init[0].lang > "/dev/null"; then
 	EOF
 fi
 
+uci -q batch <<-EOF
+	set luci.main.mediaurlbase="/luci-static/argon"
+	commit luci
+	set argon.@global[0].online_wallpaper="none"
+	commit argon
+EOF
+
 uci set fstab.@global[0].anon_mount=1
 uci commit fstab
 
