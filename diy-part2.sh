@@ -70,6 +70,10 @@ CONFIG_PACKAGE_luci-theme-openwrt-2020=y
 CONFIG_PACKAGE_tailscale=y
 CONFIG_PACKAGE_luci-app-tailscale-community=y
 
+# Wake-on-LAN
+CONFIG_PACKAGE_luci-app-wol=y
+CONFIG_PACKAGE_etherwake=y
+
 # TurboAcc
 #CONFIG_PACKAGE_luci-app-turboacc=y
 
