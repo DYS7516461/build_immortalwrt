@@ -70,6 +70,14 @@ CONFIG_PACKAGE_luci-theme-openwrt-2020=y
 CONFIG_PACKAGE_tailscale=y
 CONFIG_PACKAGE_luci-app-tailscale-community=y
 
+# Xray proxy client
+CONFIG_PACKAGE_luci-app-passwall2=y
+CONFIG_PACKAGE_xray-core=y
+# CONFIG_PACKAGE_luci-app-nikki is not set
+# CONFIG_PACKAGE_mihomo is not set
+# CONFIG_PACKAGE_mihomo-alpha is not set
+# CONFIG_PACKAGE_mihomo-meta is not set
+
 # Wake-on-LAN
 CONFIG_PACKAGE_luci-app-wol=y
 CONFIG_PACKAGE_etherwake=y
@@ -84,10 +92,6 @@ CONFIG_PACKAGE_etherwake=y
 CONFIG_PACKAGE_libustream-mbedtls=y
 # CONFIG_PACKAGE_libustream-openssl is not set
 # CONFIG_PACKAGE_wget-ssl is not set
-# Avoid recursive dependency between mihomo-alpha and mihomo-meta.
-# CONFIG_PACKAGE_mihomo-alpha is not set
-# CONFIG_PACKAGE_mihomo-meta is not set
-
 " >> .config
 
 # 修改默认IP
